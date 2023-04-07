@@ -2,6 +2,7 @@ package ru.job4j.dreamjob.service;
 
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
+import ru.job4j.dreamjob.dto.FileDto;
 import ru.job4j.dreamjob.model.Candidate;
 import ru.job4j.dreamjob.repository.CandidateRepository;
 
@@ -11,25 +12,48 @@ import java.util.Optional;
 @ThreadSafe
 @Service
 public class SimpleCandidateService implements CandidateService {
-    private final CandidateRepository repository;
 
-    public SimpleCandidateService(CandidateRepository repository) {
+    private final CandidateRepository repository;
+    private final FileService fileService;
+
+    public SimpleCandidateService(CandidateRepository repository, FileService fileService) {
         this.repository = repository;
+        this.fileService = fileService;
+    }
+
+    private void saveNewFile(Candidate candidate, FileDto image) {
+        var file = fileService.save(image);
+        candidate.setFileId(file.getId());
     }
 
     @Override
-    public Candidate save(Candidate candidate) {
+    public Candidate save(Candidate candidate, FileDto image) {
+        saveNewFile(candidate, image);
         return repository.save(candidate);
     }
 
     @Override
     public boolean deleteById(int id) {
-        return repository.deleteById(id);
+        var fileOptional = findById(id);
+        if (fileOptional.isEmpty()) {
+            return false;
+        }
+        var isDeleted = repository.deleteById(id);
+        fileService.deleteById(fileOptional.get().getFileId());
+        return isDeleted;
     }
 
     @Override
-    public boolean update(Candidate candidate) {
-        return repository.update(candidate);
+    public boolean update(Candidate candidate, FileDto image) {
+        var isNewFileEmpty = image.getContent().length == 0;
+        if (isNewFileEmpty) {
+            return repository.update(candidate);
+        }
+        var oldFileId = candidate.getFileId();
+        saveNewFile(candidate, image);
+        var isUpdated = repository.update(candidate);
+        fileService.deleteById(oldFileId);
+        return isUpdated;
     }
 
     @Override
