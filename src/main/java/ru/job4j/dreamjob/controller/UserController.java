@@ -51,4 +51,5 @@ public class UserController {
         session.setAttribute("user", userOptional.get());
         return "redirect:/vacancies";
     }
+
 }
