@@ -4,11 +4,9 @@ import org.junit.jupiter.api.*;
 import ru.job4j.dreamjob.configuration.DatasourceConfiguration;
 import ru.job4j.dreamjob.model.User;
 
-import java.util.Optional;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Disabled
 class Sql2oUserRepositoryTest {
@@ -34,23 +32,28 @@ class Sql2oUserRepositoryTest {
 
     }
 
-    @AfterAll
-    public static void deleteUsers() {
+    @AfterEach
+    public void deleteUsers() {
         repository.deleteUsers();
     }
 
     @Test
-    void dontSave() {
-        repository.save(new User(1, "77email", "name", "password"));
-        repository.save(new User(1, "55email", "name", "1password"));
-        repository.save(new User(1, "44email", "name", "2password"));
-        assertThat(repository.save(new User(1, "77email", "name", "password")))
+    void SaveAndGetSame() {
+        var user = repository.save(new User(0, "email", "name", "password"));
+        var savedUser = repository.findByEmailAndPassword("email", "password");
+        assertThat(savedUser).usingRecursiveComparison().isEqualTo(user);
+    }
+
+    @Test
+    void DontSave() {
+        repository.save(new User(0, "email", "name", "1password"));
+        repository.save(new User(0, "2email", "name", "2password"));
+        assertThat(repository.save(new User(0, "email", "name", "1password")))
                 .isEmpty();
     }
 
     @Test
-    void findByEmailAndPassword() {
-        assertThat(repository.findByEmailAndPassword("55email", "1password").get())
-                .usingRecursiveComparison().isEqualTo(new User(0, "55email", "name", "1password"));
+    void DontFindByEmailAndPassword() {
+        assertThat(repository.findByEmailAndPassword("55email", "1password")).isEmpty();
     }
 }

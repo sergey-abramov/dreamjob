@@ -1,8 +1,5 @@
 package ru.job4j.dreamjob.repository;
 
-import net.jcip.annotations.ThreadSafe;
-import org.junit.jupiter.api.Disabled;
-import org.springframework.stereotype.Repository;
 import org.sql2o.Sql2o;
 import ru.job4j.dreamjob.model.User;
 
@@ -19,7 +16,7 @@ public class Sql2oUserRepository implements UserRepository {
     @Override
     public void deleteUsers() {
         try (var connection = sql2o.open()) {
-            connection.createQuery("DELETE FROM users");
+            connection.createQuery("DELETE FROM users").executeUpdate();
         }
     }
 
@@ -36,9 +33,11 @@ public class Sql2oUserRepository implements UserRepository {
                     .addParameter("password", user.getPassword());
             int generatedId = query.executeUpdate().getKey(Integer.class);
             user.setId(generatedId);
-
+            return Optional.of(user);
+        } catch (Exception e) {
+            return Optional.empty();
         }
-        return Optional.of(user);
+
     }
 
     @Override
