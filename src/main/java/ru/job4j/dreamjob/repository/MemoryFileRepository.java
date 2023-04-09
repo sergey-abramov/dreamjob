@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @ThreadSafe
-@Repository
 public class MemoryFileRepository implements FileRepository {
 
     private final AtomicInteger nextId = new AtomicInteger(0);

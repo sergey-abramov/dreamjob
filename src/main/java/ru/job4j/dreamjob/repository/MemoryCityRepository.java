@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@Repository
 @ThreadSafe
 public class MemoryCityRepository implements CityRepository {
 
