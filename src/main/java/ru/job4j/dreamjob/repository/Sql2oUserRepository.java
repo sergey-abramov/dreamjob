@@ -1,5 +1,7 @@
 package ru.job4j.dreamjob.repository;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 import org.sql2o.Sql2o;
 import ru.job4j.dreamjob.model.User;
@@ -9,6 +11,7 @@ import java.util.Optional;
 @Repository
 public class Sql2oUserRepository implements UserRepository {
 
+    private static final Logger LOG = LogManager.getLogger(Sql2oUserRepository.class.getName());
     private final Sql2o sql2o;
 
     public Sql2oUserRepository(Sql2o sql2o) {
@@ -37,8 +40,9 @@ public class Sql2oUserRepository implements UserRepository {
             user.setId(generatedId);
             return Optional.of(user);
         } catch (Exception e) {
-            return Optional.empty();
+            LOG.error("Пользователь с таим email уже существует");
         }
+        return Optional.empty();
 
     }
 

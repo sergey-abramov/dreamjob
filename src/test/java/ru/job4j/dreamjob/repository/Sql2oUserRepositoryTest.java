@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
 class Sql2oUserRepositoryTest {
 
     private static Sql2oUserRepository repository;
