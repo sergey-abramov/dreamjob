@@ -40,7 +40,7 @@ public class Sql2oUserRepository implements UserRepository {
             user.setId(generatedId);
             return Optional.of(user);
         } catch (Exception e) {
-            LOG.error("Пользователь с таим email уже существует");
+            LOG.error("Пользователь с таим email уже существует", e);
         }
         return Optional.empty();
 
