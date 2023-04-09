@@ -38,14 +38,14 @@ class Sql2oUserRepositoryTest {
     }
 
     @Test
-    void SaveAndGetSame() {
+    void saveAndGetSame() {
         var user = repository.save(new User(0, "email", "name", "password"));
         var savedUser = repository.findByEmailAndPassword("email", "password");
         assertThat(savedUser).usingRecursiveComparison().isEqualTo(user);
     }
 
     @Test
-    void DontSave() {
+    void dontSave() {
         repository.save(new User(0, "email", "name", "1password"));
         repository.save(new User(0, "2email", "name", "2password"));
         assertThat(repository.save(new User(0, "email", "name", "1password")))
@@ -53,7 +53,7 @@ class Sql2oUserRepositoryTest {
     }
 
     @Test
-    void DontFindByEmailAndPassword() {
+    void dontFindByEmailAndPassword() {
         assertThat(repository.findByEmailAndPassword("55email", "1password")).isEmpty();
     }
 }
