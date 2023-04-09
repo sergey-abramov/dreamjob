@@ -8,6 +8,7 @@ import ru.job4j.dreamjob.model.User;
 import ru.job4j.dreamjob.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @ThreadSafe
 @Controller
@@ -50,6 +51,12 @@ public class UserController {
         var session = request.getSession();
         session.setAttribute("user", userOptional.get());
         return "redirect:/vacancies";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/users/login";
     }
 
 }

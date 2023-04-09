@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.job4j.dreamjob.dto.FileDto;
 import ru.job4j.dreamjob.model.Candidate;
+import ru.job4j.dreamjob.model.User;
 import ru.job4j.dreamjob.service.CandidateService;
 import ru.job4j.dreamjob.service.CityService;
+
+import javax.servlet.http.HttpSession;
 
 @ThreadSafe
 @Controller
@@ -24,7 +27,13 @@ public class CandidateController {
     }
 
     @GetMapping
-    public String getAll(Model model) {
+    public String getAll(Model model, HttpSession session) {
+        var user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName("Гость");
+        }
+        model.addAttribute("user", user);
         model.addAttribute("candidates", service.findAll());
         return "candidates/list";
     }
